@@ -172,7 +172,7 @@ class ShoppingCart < ActiveRecord::Base
     price = calculate_gross
 
     options.merge!(
-      # Price currency as an ISO 4217 code such as USD or BTC. This determines what currency the price is shown in on the payment widget.
+      # Price currency as an ISO 4217 code such as USD, BTC, or BCH. This determines what currency the price is shown in on the payment widget.
       price_currency_iso: 'USD',
 
       # Auto-redirect users to success or cancel url after payment. (Cancel url if the user pays the wrong amount.)

@@ -43,6 +43,6 @@
 
 require 'spec_helper'
 
-describe CashOut::Ripple do
-  it { should validate_presence_of(:ripple_address) }
+describe CashOut::BitcoinCash do
+  it { should validate_presence_of(:bitcoincash_address) }
 end

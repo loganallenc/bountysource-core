@@ -298,6 +298,15 @@
               </label>
             </div>
 
+            <div class="radio">
+              <label>
+                <input type="radio" ng-model="checkoutPayload.checkout_method" value="coinbase" ng-disabled="!BS_ENV.coinbase_enabled">
+                <favicon style="width: 16px; height: 16px;" domain="https://www.bitcoincash.org/"></favicon>
+                <span ng-if="BS_ENV.coinbase_enabled">Bitcoin Cash</span>
+                <span ng-if="!BS_ENV.coinbase_enabled" style="color: #888">Bitcoin Cash (temporarily disabled)</span>
+              </label>
+            </div>
+
             <!-- Personal Account -->
             <div class="radio" ng-if="current_person.account.balance > 0">
               <label>

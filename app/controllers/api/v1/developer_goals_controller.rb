@@ -1,16 +1,16 @@
 class Api::V1::DeveloperGoalsController < ApplicationController
-  
+
   before_filter :require_auth, only: [:create, :update, :show, :destroy]
   before_filter require_issue(:id)
   before_filter :require_developer_goals, only: [:update, :show, :destroy]
-  
+
   after_filter log_activity(Issue::Event::SET_DEVELOPER_GOAL), only: [:create]
   after_filter log_activity(Issue::Event::UPDATE_DEVELOPER_GOAL), only: [:update]
   after_filter log_activity(Issue::Event::DESTROY_DEVELOPER_GOAL), only: [:destroy]
 
   def create
     require_params :amount
-    
+
     if (@developer_goal = @issue.developer_goals.where(person_id: @person.id).first)
       render "api/v1/developer_goals/show", status: :not_modified
     else
@@ -30,7 +30,7 @@ class Api::V1::DeveloperGoalsController < ApplicationController
   end
 
   def update
-    params[:amount] = convert_currency_if_necessary(params)    
+    params[:amount] = convert_currency_if_necessary(params)
     @developer_goal.amount = params[:amount] if params.has_key?(:amount)
 
     if @developer_goal.save
@@ -65,6 +65,9 @@ protected
 
     if currency == "BTC"
       amount = Currency.btc_to_usd(amount)
+    end
+    if currency == "BCH"
+      amount = Currency.bch_to_usd(amount)
     end
     amount
   end

@@ -8,7 +8,15 @@ angular.module('filters').filter('currencyUnit', function ($filter) {
       } else {
         return 'μBTC ';
       }
-    } else if (currency === 'XRP') {
+  } else if (currency === 'BCH') {
+    if (value <= 0 || value > 0.001) {
+      return 'BCH';
+    } else if (value <= 0.001 && value > 0.000001) {
+      return 'mBCH ';
+    } else {
+      return 'μBCH ';
+    }
+  } else if (currency === 'XRP') {
       return 'XRP';
     } else if (currency === 'MSC') {
       return 'MSC';

@@ -22,6 +22,7 @@
 #  fee_adjustment             :decimal(, )
 #  ripple_address             :string(255)
 #  mastercoin_address         :string(255)
+#  bitcoincash_address        :string(255)
 #  is_refund                  :boolean          default(FALSE), not null
 #  account_id                 :integer          not null
 #  quickbooks_transaction_id  :integer
@@ -31,6 +32,7 @@
 #  index_cash_outs_on_address_id          (address_id)
 #  index_cash_outs_on_amount              (amount)
 #  index_cash_outs_on_bitcoin_address     (bitcoin_address)
+#  index_cash_outs_on_bitcoincash_address (bitcoincash_address)
 #  index_cash_outs_on_mailing_address_id  (mailing_address_id)
 #  index_cash_outs_on_paypal_address      (paypal_address)
 #  index_cash_outs_on_person_id           (person_id)
@@ -43,7 +45,7 @@ class CashOut < ActiveRecord::Base
 
   class InvalidType < StandardError ; end
 
-  attr_accessible :person, :address, :amount, :mailing_address, :bitcoin_address, :remote_ip, :user_agent, :paypal_address,
+  attr_accessible :person, :address, :amount, :mailing_address, :bitcoin_address, :bitcoincash_address, :remote_ip, :user_agent, :paypal_address,
                   :us_citizen, :sent_at, :is_refund
 
   belongs_to :person
@@ -178,6 +180,7 @@ class CashOut < ActiveRecord::Base
     klass = case type
     when 'paypal' then CashOut::Paypal
     when 'bitcoin' then CashOut::Bitcoin
+    when 'bitcoincash' then CashOut::BitcoinCash
     when 'check' then CashOut::Check
     when 'ripple' then CashOut::Ripple
     when 'mastercoin' then CashOut::Mastercoin

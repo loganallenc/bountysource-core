@@ -671,6 +671,7 @@ describe ShoppingCart do
       Currency.stub(:btc_rate) { 900.0 }
       Currency.stub(:msc_rate) { 800.0 }
       Currency.stub(:xrp_rate) { 700.0 }
+      Currency.stub(:bch_rate) { 1600.0 }
     end
 
     it 'should stay in USD' do
@@ -681,6 +682,11 @@ describe ShoppingCart do
     it 'should convert BTC to USD' do
       cart.add_item item_attributes.merge(amount: amount, currency: 'BTC')
       cart.calculate_gross.should eq(amount * Currency.btc_rate)
+    end
+
+    it 'should convert BCH to USD' do
+      cart.add_item item_attributes.merge(amount: amount, currency: 'BCH')
+      cart.calculate_gross.should eq(amount * Currency.bch_rate)
     end
 
     it 'should convert MSC to USD' do
@@ -696,9 +702,10 @@ describe ShoppingCart do
     it 'should convert all currencies into USD' do
       cart.add_item item_attributes.merge(amount: amount, currency: 'USD')
       cart.add_item item_attributes.merge(amount: amount, currency: 'BTC')
+      cart.add_item item_attributes.merge(amount: amount, currency: 'BCH')
       cart.add_item item_attributes.merge(amount: amount, currency: 'MSC')
       cart.add_item item_attributes.merge(amount: amount, currency: 'XRP')
-      cart.calculate_gross.should eq(amount + (amount * Currency.btc_rate) + (amount * Currency.msc_rate) + (amount * Currency.xrp_rate))
+      cart.calculate_gross.should eq(amount + (amount * Currency.btc_rate) + (amount * Currency.bch_rate) + (amount * Currency.msc_rate) + (amount * Currency.xrp_rate))
     end
   end
 

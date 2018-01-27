@@ -178,6 +178,7 @@ ActiveRecord::Schema.define(version: 20171210181208) do
     t.decimal  "fee_adjustment"
     t.string   "ripple_address"
     t.string   "mastercoin_address"
+    t.string   "bitcoincash_address"
     t.boolean  "is_refund",                  default: false, null: false
     t.integer  "account_id",                                 null: false
     t.integer  "quickbooks_transaction_id"
@@ -186,6 +187,7 @@ ActiveRecord::Schema.define(version: 20171210181208) do
   add_index "cash_outs", ["address_id"], name: "index_cash_outs_on_address_id", using: :btree
   add_index "cash_outs", ["amount"], name: "index_cash_outs_on_amount", using: :btree
   add_index "cash_outs", ["bitcoin_address"], name: "index_cash_outs_on_bitcoin_address", using: :btree
+  add_index "cash_outs", ["bitcoincash_address"], name: "index_cash_outs_on_bitcoincash_address", using: btree
   add_index "cash_outs", ["mailing_address_id"], name: "index_cash_outs_on_mailing_address_id", using: :btree
   add_index "cash_outs", ["paypal_address"], name: "index_cash_outs_on_paypal_address", using: :btree
   add_index "cash_outs", ["person_id"], name: "index_cash_outs_on_person_id", using: :btree

@@ -166,6 +166,19 @@
               </div>
             </div>
 
+            <!-- Bitcoin Cash -->
+            <div class="form-group" style="margin-bottom: 0;">
+              <div class="col-sm-12">
+                <div class="radio">
+                  <label>
+                    <input type="radio" ng-model="cashOut.type" ng-value="'bitcoincash'" ng-disabled="!BS_ENV.coinbase_enabled" />
+                    <span ng-if="BS_ENV.coinbase_enabled">Bitcoin</span>
+                    <span ng-if="!BS_ENV.coinbase_enabled" style="color: #888">Bitcoin Cash (temporarily disabled)</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
             <!-- Ripple is no longer supported
             <div class="form-group" style="margin-bottom: 0;">
               <div class="col-sm-12">
@@ -208,6 +221,13 @@
         </div>
       </div>
 
+      <!-- Bitcoin Cash Address -->
+      <div class="form-group" ng-if="cashOut.type === 'bitcoincash'" ng-class="{ 'has-error': paymentMethodForm.bitcoinCashAddress.$invalid }">
+        <label class="control-label col-sm-3">Bitcoin Cash Address:</label>
+        <div class="col-sm-9">
+          <input type="text" name="bitcoinCashAddress" class="form-control" ng-model="cashOut.bitcoincash_address" required autocomplete />
+        </div>
+      </div>
 
       <!-- Ripple Address -->
       <div class="form-group" ng-if="cashOut.type === 'ripple'" ng-class="{ 'has-error': paymentMethodForm.rippleAddress.$invalid }">

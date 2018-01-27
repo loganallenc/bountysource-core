@@ -41,6 +41,10 @@ class Currency < ActiveRecord::Base
     Currency::Bitcoin.first.value
   end
 
+  def self.bch_rate
+    Currency::BitcoinCash.first.value
+  end
+
   def self.msc_rate
     Currency::Mastercoin.first.value
   end
@@ -60,6 +64,8 @@ class Currency < ActiveRecord::Base
       case to
       when 'BTC' # USD to BTC
         amount / btc_rate
+      when 'BCH' # USD to BCH
+        amount / bch_rate
       when 'MSC' # USD to MSC
         amount / msc_rate
       when 'XRP' # USD to XRP
@@ -74,6 +80,20 @@ class Currency < ActiveRecord::Base
         btc_to_usd(amount) * msc_rate
       when 'XRP' # BTC to XRP
         btc_to_usd(amount) * xrp_rate
+      when 'BCH' # BTC to BCH
+        btc_to_usd(amount) * bch_rate
+      end
+
+    when 'BCH'
+      case to
+      when 'USD' # BCH to USD
+        amount * bch_rate
+      when 'MSC' # BCH to MSC
+        bch_to_usd(amount) * msc_rate
+      when 'XRP' # BCH to XRP
+        bch_to_usd(amount) * xrp_rate
+      when 'BTC' # BCH to BCH
+        bch_to_usd(amount) * btc_rate
       end
 
     when 'MSC'
@@ -84,6 +104,8 @@ class Currency < ActiveRecord::Base
         msc_to_usd(amount) * btc_rate
       when 'XRP' # MSC to XRP
         msc_to_usd(amount) * xrp_rate
+      when 'BCH' # MSC to BCH
+        msc_to_usd(amount) * bch_rate
       end
 
     when 'XRP'
@@ -94,12 +116,18 @@ class Currency < ActiveRecord::Base
         xrp_to_usd(amount) * btc_rate
       when 'MSC' # XRP to MSC
         xrp_to_usd(amount) * msc_rate
+      when 'BCH' # XRP to BCH
+        xrp_to_usd(amount) * bch_rate
       end
     end
   end
 
   def self.btc_to_usd(amount)
     convert(amount, 'BTC', 'USD')
+  end
+
+  def self.bch_to_usd(amount)
+    convert(amount, 'BCH', 'USD')
   end
 
   def self.msc_to_usd amount
@@ -112,6 +140,10 @@ class Currency < ActiveRecord::Base
 
   def self.usd_to_btc amount
     convert(amount, 'USD', 'BTC')
+  end
+
+  def self.usd_to_bch amount
+    convert(amount, 'USD', 'BCH')
   end
 
   # Convert currency to USD

@@ -2,7 +2,7 @@ angular.module('services').service('$currency', function ($rootScope, $cookieJar
 
   var self = this;
 
-  this._currencies = ['USD', 'BTC', 'MSC', 'XRP'];
+  this._currencies = ['USD', 'BTC', 'BCH', 'MSC', 'XRP'];
   this._cookieName = 'currencySwitcherValue';
 
   this.currencyChangedEventName = 'currencyChangedEvent';
@@ -12,11 +12,14 @@ angular.module('services').service('$currency', function ($rootScope, $cookieJar
 
   // Get BTC price
   this.btcToUsdRate = undefined;
+  this.bchToUsdRate = undefined;
   this.mscToUsdRate = undefined;
   this.xrpToUsdRate = undefined;
   $api.v2.currencies().then(function(response) {
     if (response.success) {
+      print(response);
       self.btcToUsdRate = response.data.bitcoin;
+      self.bchToUsdRate = response.data.bitcoincash;
       self.mscToUsdRate = response.data.mastercoin;
       self.xrpToUsdRate = response.data.ripple;
       onLoadDeferred.resolve(self);
@@ -58,12 +61,24 @@ angular.module('services').service('$currency', function ($rootScope, $cookieJar
     return value * this.btcToUsdRate;
   };
 
+  this.usdToBch = function (value) {
+    return value / this.bchToUsdRate;
+  };
+
+  this.bchToUsd = function (value) {
+    return value * this.bchToUsdRate;
+  };
+
   this.isUSD = function (value) {
     return (angular.isDefined(value) ? value : this.value) === 'USD';
   };
 
   this.isBTC = function (value) {
     return (angular.isDefined(value) ? value : this.value) === 'BTC';
+  };
+
+  this.isBCH = function (value) {
+    return (angular.isDefined(value) ? value : this.value) === 'BCH';
   };
 
   this.isXRP = function (value) {
@@ -82,6 +97,10 @@ angular.module('services').service('$currency', function ($rootScope, $cookieJar
     return this.setCurrency('BTC');
   };
 
+  this.setBCH = function () {
+    return this.setCurrency('BCH');
+  };
+
   this.setXRP = function () {
     return this.setCurrency('XRP');
   };
@@ -94,7 +113,7 @@ angular.module('services').service('$currency', function ($rootScope, $cookieJar
     var parsedAmount;
     if (this.isUSD()) {
       parsedAmount = parseInt(amount, 10);
-    } else if (this.isBTC() || this.isXRP() || this.isMSC()) {
+    } else if (this.isBTC() || this.isXRP() || this.isMSC() || this.isBCH()) {
       parsedAmount = parseFloat(amount);
     }
     return parsedAmount;
@@ -121,6 +140,10 @@ angular.module('services').service('$currency', function ($rootScope, $cookieJar
     } else if (this.isUSD(fromCurrency) && this.isBTC(toCurrency)){
       new_amount = amount / this.btcToUsdRate;
 
+    // USD to BCH
+    } else if (this.isUSD(fromCurrency) && this.isBCH(toCurrency)){
+      new_amount = amount / this.bchToUsdRate;
+
     // USD to MSC
     } else if (this.isUSD(fromCurrency) && this.isMSC(toCurrency)) {
       new_amount = amount / this.mscToUsdRate;
@@ -132,6 +155,10 @@ angular.module('services').service('$currency', function ($rootScope, $cookieJar
     // BTC to USD
     } else if (this.isBTC(fromCurrency) && this.isUSD(toCurrency)){
       new_amount = amount * this.btcToUsdRate;
+
+    // BTC to BCH
+    } else if (this.isBTC(fromCurrency) && this.isBCH(toCurrency)){
+      new_amount = this.convert(amount, 'BTC', 'BCH') * this.mchToUsdRate;
 
     // BTC to MSC
     } else if (this.isBTC(fromCurrency) && this.isMSC(toCurrency)){
@@ -150,6 +177,11 @@ angular.module('services').service('$currency', function ($rootScope, $cookieJar
       usd = this.convert(amount, 'MSC', 'USD');
       new_amount = this.convert(usd, 'USD', 'BTC');
 
+    // MSC to BCH
+    } else if (this.isMSC(fromCurrency) && this.isBTC(toCurrency)) {
+      usd = this.convert(amount, 'MSC', 'USD');
+      new_amount = this.convert(usd, 'USD', 'BCH');
+
     // MSC to XRP
     } else if (this.isMSC(fromCurrency) && this.isXRP(toCurrency)) {
       usd = this.convert(amount, 'MSC', 'USD');
@@ -164,6 +196,11 @@ angular.module('services').service('$currency', function ($rootScope, $cookieJar
       usd = this.convert(amount, 'XRP', 'USD');
       new_amount = this.convert(usd, 'USD', 'BTC');
 
+    // XRP to BCH
+    } else if (this.isXRP(fromCurrency) && this.isBCH(toCurrency)) {
+      usd = this.convert(amount, 'XRP', 'BCH');
+      new_amount = this.convert(usd, 'USD', 'BCH');
+
     // XRP to MSC
     } else if (this.isXRP(fromCurrency) && this.isMSC(toCurrency)) {
       usd = this.convert(amount, 'XRP', 'USD');
@@ -174,6 +211,14 @@ angular.module('services').service('$currency', function ($rootScope, $cookieJar
   };
 
   this.usdToBtc = function (value) {
+    return this.convert(value, 'USD', 'BTC');
+  };
+
+  this.btcToUsd = function (value) {
+    return this.convert(value, 'BTC', 'USD');
+  };
+
+  this.usdToBch = function (value) {
     return this.convert(value, 'USD', 'BTC');
   };
 
@@ -213,6 +258,9 @@ angular.module('services').service('$currency', function ($rootScope, $cookieJar
       case ('BTC'):
         return overrides.BTC || 3;
 
+      case ('BCH'):
+        return overrides.BCH || 3;
+
       case ('XRP'):
         return overrides.XRP || 0;
     }
@@ -225,7 +273,7 @@ angular.module('services').service('$currency', function ($rootScope, $cookieJar
   * */
   this.hasSymbol = function (currencyIso) {
     currencyIso = currencyIso || this.value;
-    return this.isUSD(currencyIso) || this.isBTC(currencyIso);
+    return this.isUSD(currencyIso) || this.isBTC(currencyIso) || this.isBCH(currencyIso);
   };
 
 });

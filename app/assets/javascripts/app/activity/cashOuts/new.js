@@ -51,6 +51,7 @@ angular.module('activity').
       amount: undefined,
       paypal_address: undefined,
       bitcoin_address: undefined,
+      bitcoincash_address: undefined,
       address: undefined,
       mailing_address: undefined,
       us_citizen: undefined,
@@ -150,6 +151,7 @@ angular.module('activity').
           // Remove paypal/bitcoin if wrong type of cash out
           if (payload.type !== 'paypal') { delete payload.paypal_address; }
           if (payload.type !== 'bitcoin') { delete payload.bitcoin_address; }
+          if (payload.type !== 'bitcoincash') { delete payload.bitcoincash_address }
 
           $api.v2.createCashOut(payload).then(function(response) {
             if (response.success) {

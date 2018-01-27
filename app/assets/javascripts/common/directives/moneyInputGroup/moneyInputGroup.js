@@ -12,6 +12,7 @@ angular.module('directives').directive('moneyInputGroup', function ($currency) {
 
       scope.setCurrencyUSD = function () { scope.currency = 'USD'; };
       scope.setCurrencyBTC = function () { scope.currency = 'BTC'; };
+      scope.setCurrencyBCH = function () { scope.currency = 'BCH'; };
 
       // If the currency is globally set to USD, ensure that input currency is USD
       scope.$on($currency.currencyChangedEventName, function () {
@@ -19,6 +20,8 @@ angular.module('directives').directive('moneyInputGroup', function ($currency) {
           scope.currency = 'USD';
         } else if ($currency.isBTC()) {
           scope.currency = 'BTC';
+        } else if ($currency.isBCH()) {
+          scope.currency = 'BCH';
         }
       });
 

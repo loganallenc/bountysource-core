@@ -80,6 +80,8 @@ class PaymentNotification::Coinbase < PaymentNotification
         order_params['total_native']['cents'].to_i
       when :btc
         order_params['total_btc']['cents'].to_i
+      when :bch
+        order_params['total_bch']['cents'].to_i
       end
     end
   end

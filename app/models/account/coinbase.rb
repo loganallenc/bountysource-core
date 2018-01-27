@@ -30,7 +30,7 @@ class Account::Coinbase < Account
   end
 
   def display_name
-    'Bitcoin'
+    'Bitcoin / Bitcoin Cash '
   end
 
 end

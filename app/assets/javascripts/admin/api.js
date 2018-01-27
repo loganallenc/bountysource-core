@@ -816,6 +816,7 @@ angular.module('api.bountysource',[]).
         'Team',
         'CashOut::Paypal',
         'CashOut::Bitcoin',
+        'CashOut::BitcoinCash',
         'CashOut::Check'
       ];
     };

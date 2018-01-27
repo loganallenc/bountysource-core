@@ -21,6 +21,7 @@ class Api::V2::CashOutsController < Api::BaseController
 
   def create
     raise "Coinbase is disabled" if params[:bitcoin_address] && ENV['COINBASE_DISABLED']
+    raise "Coinbase is disabled" if params[:bitcoincash_address] && ENV['COINBASE_DISABLED']
 
     if team_id = params[:source].try(:match, /\Ateam(\d+)\Z/).try(:[], 1)
       account = current_user.team_member_relations.where(admin: true, team_id: team_id).first.try(:team).try(:account)
@@ -47,6 +48,7 @@ class Api::V2::CashOutsController < Api::BaseController
 
     @item.paypal_address = params[:paypal_address]
     @item.bitcoin_address = params[:bitcoin_address]
+    @item.bitcoincash_address = params[:bitcoincash_address]
     @item.ripple_address = params[:ripple_address]
     @item.mastercoin_address = params[:mastercoin_address]
 
